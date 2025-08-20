@@ -38,7 +38,6 @@ const users = [
 ];
 
 app.get("/users", async (req, res) => {
-  console.log("hej");
   res.json(users);
 });
 
