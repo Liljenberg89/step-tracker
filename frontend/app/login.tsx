@@ -2,28 +2,35 @@ import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { useState } from "react";
 
 export default function Login() {
-  const [Username, setUsername] = useState("");
-  const [Password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    console.log(Username);
-    console.log(Password);
+  const handleLogin = async () => {
+    const response = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await response.json();
+    console.log("data: " + JSON.stringify(data));
   };
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        value={Username}
+        value={username}
         onChangeText={setUsername}
         placeholder="Username"
         autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        value={Password}
+        value={password}
         onChangeText={setPassword}
         placeholder="Password"
-        autoCapitalize="none"
+        secureTextEntry
       />
       <Button title="Logga in" onPress={handleLogin} />
     </View>
