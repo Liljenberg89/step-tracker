@@ -1,23 +1,12 @@
 import express, { json } from "express";
 import cors from "cors";
 import User from "./models/User.js";
+import bcrypt from "bcrypt";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-const createUser = async () => {
-  const testUser = new User({
-    username: "admin",
-    passwordHash: "admin",
-    name: "Admin Admin",
-    height: 200,
-    weight: 95,
-  });
-
-  await testUser.save();
-};
 
 app.get("/users", async (req, res) => {
   const users = await User.find();
@@ -32,16 +21,50 @@ app.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({
       username: username,
-      passwordHash: password,
     });
+
     if (user) {
-      console.log("användare: " + JSON.stringify(user));
-      res.json(user);
+      const matchPassword = await bcrypt.compare(password, user.passwordHash);
+      if (matchPassword) {
+        console.log("användare: " + JSON.stringify(user));
+        res.json(user);
+      } else {
+        console.log("Fel lösenord!");
+        res.status(401).json({ message: "Fel lösenord!" });
+      }
     } else {
-      console.log("Ingen användare hittades");
-      res.status(401).json({ message: "Ingen användare hittades" });
+      console.log("Ingen användare med det namnet hittades");
+      res
+        .status(401)
+        .json({ message: "Ingen användare med det namnet hittades" });
     }
   } catch (error) {}
 });
+
+//------ tas bort senare ------
+// tar bort alla användare ▬
+const clearUsers = async () => {
+  try {
+    await User.deleteMany({});
+    console.log("Alla användare har raderats!");
+  } catch (error) {
+    console.error("Kunde inte rensa användare:", error);
+  }
+};
+
+// skapar ny användare
+const createUser = async () => {
+  const passwordHash = await bcrypt.hash("123", 10);
+
+  const testUser = new User({
+    username: "filip",
+    passwordHash: passwordHash,
+    name: "Filip",
+    height: 187,
+    weight: 80,
+  });
+
+  await testUser.save();
+};
 
 export default app;
