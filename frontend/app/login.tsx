@@ -14,7 +14,11 @@ export default function Login() {
       body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
-    console.log("data: " + JSON.stringify(data));
+    if (response.ok) {
+      console.log(data);
+    } else {
+      console.log(JSON.stringify(data.message));
+    }
   };
   return (
     <View style={styles.container}>
