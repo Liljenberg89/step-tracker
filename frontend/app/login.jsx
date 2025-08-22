@@ -1,7 +1,7 @@
 import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { useState } from "react";
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,6 +15,7 @@ export default function Login() {
     });
     const data = await response.json();
     if (response.ok) {
+      onLogin(data);
       console.log(data);
     } else {
       console.log(JSON.stringify(data.message));
