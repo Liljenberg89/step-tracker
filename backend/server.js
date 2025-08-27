@@ -42,7 +42,9 @@ app.post("/login", async (req, res) => {
 });
 
 app.put("/userInfo/:id", async (req, res) => {
-  //const user = await User.findByIdAndUpdate(req.params._id, )
+  console.log(req.params.id);
+  console.log(req.body);
+  const user = await User.findByIdAndUpdate(req.params.id, req.body.userInfo);
 });
 
 //------ tas bort senare ------
@@ -61,11 +63,8 @@ const createUser = async () => {
   const passwordHash = await bcrypt.hash("123", 10);
 
   const testUser = new User({
-    username: "filip",
+    username: "Hasse",
     passwordHash: passwordHash,
-    name: "Filip",
-    height: 187,
-    weight: 80,
   });
 
   await testUser.save();

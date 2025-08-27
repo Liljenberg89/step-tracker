@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   Dimensions,
-  Switch,
   TextInput,
 } from "react-native";
 import { use, useEffect, useState } from "react";
@@ -14,23 +13,31 @@ const { width } = Dimensions.get("window");
 
 export default function Home({ user }) {
   //const [toggle, setToggle] = useState(true);
-  const { name, weeklyGoal, height, weight, username, _id } = user;
+  const { name, weeklyGoal, username, _id } = user;
   const [userInfo, setUserInfo] = useState({
     name: "",
     height: "",
     weight: "",
+    weeklyGoal: "",
   });
 
-  //första gången man loggar in
   const loggedIn = () => {
     const [toggle, setToggle] = useState(true);
-    const [tempGoal, setTempGoal] = useState("");
-    const [dailyGoal, setDailyGoal] = useState(weeklyGoal);
-    const handleSave = (e) => {
-      setDailyGoal(tempGoal);
+
+    const handleSave = async (e) => {
+      console.log(userInfo);
+
+      const response = await fetch(`http://localhost:3000/userInfo/${_id}`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userInfo }),
+      });
+      () => setToggle(true);
     };
 
-    if (dailyGoal === 0 && toggle) {
+    if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
       return (
         <>
           <View style={styles.settings}>
@@ -65,20 +72,29 @@ export default function Home({ user }) {
           </View>
         </>
       );
-    } else {
+    } else if (!toggle) {
       return (
         <View>
           <View style={styles.goals}>
             <Text>Välj ditt dagliga steg-mål:</Text>
             <TextInput
               style={styles.inputGoal}
-              value={tempGoal}
-              onChangeText={setTempGoal}
+              value={userInfo.weeklyGoal}
+              onChangeText={(text) =>
+                setUserInfo({ ...userInfo, weeklyGoal: text })
+              }
             ></TextInput>
-            <Button title="spara" onPress={handleSave}></Button>
+            <Button
+              title="spara"
+              onPress={() => {
+                handleSave(), setToggle(true);
+              }}
+            ></Button>
           </View>
         </View>
       );
+    } else {
+      return <Text>hej {name}</Text>;
     }
   };
 
