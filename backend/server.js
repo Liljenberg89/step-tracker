@@ -41,6 +41,10 @@ app.post("/login", async (req, res) => {
   } catch (error) {}
 });
 
+app.put("/userInfo/:id", async (req, res) => {
+  //const user = await User.findByIdAndUpdate(req.params._id, )
+});
+
 //------ tas bort senare ------
 // tar bort alla användare ▬
 const clearUsers = async () => {

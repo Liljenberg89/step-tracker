@@ -23,6 +23,7 @@ export default function Login({ onLogin }) {
   };
 
   const createUser = () => {};
+
   return (
     <View style={styles.container}>
       <TextInput

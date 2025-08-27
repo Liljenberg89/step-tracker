@@ -13,31 +13,56 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const { width } = Dimensions.get("window");
 
 export default function Home({ user }) {
-  const [toggle, setToggle] = useState(true);
-  const [loggedUser, setLoggedUser] = useState(user);
-  const { name, weeklyGoal, height, weight, username } = loggedUser;
+  //const [toggle, setToggle] = useState(true);
+  const { name, weeklyGoal, height, weight, username, _id } = user;
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    height: "",
+    weight: "",
+  });
 
-  const [tempGoal, setTempGoal] = useState("");
-  const [dailyGoal, setDailyGoal] = useState(weeklyGoal);
-
+  //första gången man loggar in
   const loggedIn = () => {
+    const [toggle, setToggle] = useState(true);
+    const [tempGoal, setTempGoal] = useState("");
+    const [dailyGoal, setDailyGoal] = useState(weeklyGoal);
     const handleSave = (e) => {
       setDailyGoal(tempGoal);
     };
 
-    if (dailyGoal === 0) {
+    if (dailyGoal === 0 && toggle) {
       return (
         <>
           <View style={styles.settings}>
             <Icon name="user" size={width * 0.35} color="#264653" />
             <View>
-              <TextInput style={styles.input} placeholder="Namn"></TextInput>
-              <TextInput style={styles.input} placeholder="Längd"></TextInput>
-              <TextInput style={styles.input} placeholder="Vikt"></TextInput>
+              <TextInput
+                style={styles.input}
+                placeholder="Namn"
+                value={userInfo.name}
+                onChangeText={(text) =>
+                  setUserInfo({ ...userInfo, name: text })
+                }
+              ></TextInput>
+              <TextInput
+                style={styles.input}
+                placeholder="Längd"
+                value={userInfo.height}
+                onChangeText={(text) =>
+                  setUserInfo({ ...userInfo, height: text })
+                }
+              ></TextInput>
+              <TextInput
+                style={styles.input}
+                placeholder="Vikt"
+                value={userInfo.weight}
+                onChangeText={(text) =>
+                  setUserInfo({ ...userInfo, weight: text })
+                }
+              ></TextInput>
+              <Button title="Nästa" onPress={() => setToggle(!toggle)}></Button>
             </View>
           </View>
-
-          <Button title="Vidare"></Button>
         </>
       );
     } else {
