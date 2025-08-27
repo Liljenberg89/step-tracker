@@ -15,6 +15,15 @@ app.get("/users", async (req, res) => {
   res.json(users);
 });
 
+app.post("/createUser", async (req, res) => {
+  const { username, password } = req.body;
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const user = { username: username, passwordHash: passwordHash };
+  const create = new User({ user });
+});
+
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -63,11 +72,10 @@ const createUser = async () => {
   const passwordHash = await bcrypt.hash("123", 10);
 
   const testUser = new User({
-    username: "Hasse",
+    username: "Tony",
     passwordHash: passwordHash,
   });
 
   await testUser.save();
 };
-
 export default app;
