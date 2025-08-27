@@ -11,66 +11,94 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
-export default function Home({ user, setUser }) {
-  const { name, weeklyGoal, height, weight, username, _id } = user;
-
-  // states
-  const [toggle, setToggle] = useState(true);
-  const [tempGoal, setTempGoal] = useState(weeklyGoal?.toString() || "");
-  const [dailyGoal, setDailyGoal] = useState(weeklyGoal || 0);
+export default function Home({ user }) {
+  //const [toggle, setToggle] = useState(true);
+  const { name, weeklyGoal, username, _id } = user;
   const [userInfo, setUserInfo] = useState({
-    name: name || "",
-    height: height?.toString() || "",
-    weight: weight?.toString() || "",
+    name: "",
+    height: "",
+    weight: "",
+    weeklyGoal: "",
   });
   const handleLogout = () => {
   setUser(null);
   };
   
 
-  // save user info to backend
-  const handleSaveUserInfo = async () => {
-    try {
+  const loggedIn = () => {
+    const [toggle, setToggle] = useState(true);
+
+    const handleSave = async (e) => {
+      console.log(userInfo);
+
       const response = await fetch(`http://localhost:3000/userInfo/${_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: userInfo.name,
-          height: Number(userInfo.height),
-          weight: Number(userInfo.weight),
-        }),
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userInfo }),
       });
+      () => setToggle(true);
+    };
 
-      const data = await response.json();
-      if (response.ok) {
-        console.log("User info updated:", data);
-        setToggle(false); // go to goal screen
-      } else {
-        console.log("Error updating user:", data.message);
-      }
-    } catch (err) {
-      console.error("Network error:", err);
-    }
-  };
-
-  // save goal to backend
-  const handleSaveGoal = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/userInfo/${_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ weeklyGoal: Number(tempGoal) }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setDailyGoal(Number(tempGoal));
-        console.log("Goal updated:", data);
-      } else {
-        console.log("Error saving goal:", data.message);
-      }
-    } catch (err) {
-      console.error("Network error:", err);
+    if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
+      return (
+        <>
+          <View style={styles.settings}>
+            <Icon name="user" size={width * 0.35} color="#264653" />
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Namn"
+                value={userInfo.name}
+                onChangeText={(text) =>
+                  setUserInfo({ ...userInfo, name: text })
+                }
+              ></TextInput>
+              <TextInput
+                style={styles.input}
+                placeholder="Längd"
+                value={userInfo.height}
+                onChangeText={(text) =>
+                  setUserInfo({ ...userInfo, height: text })
+                }
+              ></TextInput>
+              <TextInput
+                style={styles.input}
+                placeholder="Vikt"
+                value={userInfo.weight}
+                onChangeText={(text) =>
+                  setUserInfo({ ...userInfo, weight: text })
+                }
+              ></TextInput>
+              <Button title="Nästa" onPress={() => setToggle(!toggle)}></Button>
+            </View>
+          </View>
+        </>
+      );
+    } else if (!toggle) {
+      return (
+        <View>
+          <View style={styles.goals}>
+            <Text>Välj ditt dagliga steg-mål:</Text>
+            <TextInput
+              style={styles.inputGoal}
+              value={userInfo.weeklyGoal}
+              onChangeText={(text) =>
+                setUserInfo({ ...userInfo, weeklyGoal: text })
+              }
+            ></TextInput>
+            <Button
+              title="spara"
+              onPress={() => {
+                handleSave(), setToggle(true);
+              }}
+            ></Button>
+          </View>
+        </View>
+      );
+    } else {
+      return <Text>hej {name}</Text>;
     }
   };
 
