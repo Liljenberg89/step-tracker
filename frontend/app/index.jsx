@@ -23,5 +23,9 @@ export default function Index() {
 
 */
 
-  return user ? <Home user={user} /> : <Login onLogin={setUser} />;
+  return user ? (
+    <Home user={user} setUser={setUser} />
+  ) : (
+    <Login onLogin={setUser} />
+  );
 }

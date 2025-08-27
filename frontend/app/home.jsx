@@ -1,96 +1,140 @@
 import {
   View,
-  Button,
   StyleSheet,
   Text,
   Dimensions,
-  Switch,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
-export default function Home({ user }) {
-  //const [toggle, setToggle] = useState(true);
+export default function Home({ user, setUser }) {
   const { name, weeklyGoal, height, weight, username, _id } = user;
+
+  // states
+  const [toggle, setToggle] = useState(true);
+  const [tempGoal, setTempGoal] = useState(weeklyGoal?.toString() || "");
+  const [dailyGoal, setDailyGoal] = useState(weeklyGoal || 0);
   const [userInfo, setUserInfo] = useState({
-    name: "",
-    height: "",
-    weight: "",
+    name: name || "",
+    height: height?.toString() || "",
+    weight: weight?.toString() || "",
   });
+  const handleLogout = () => {
+  setUser(null);
+  };
+  
 
-  //första gången man loggar in
-  const loggedIn = () => {
-    const [toggle, setToggle] = useState(true);
-    const [tempGoal, setTempGoal] = useState("");
-    const [dailyGoal, setDailyGoal] = useState(weeklyGoal);
-    const handleSave = (e) => {
-      setDailyGoal(tempGoal);
-    };
+  // save user info to backend
+  const handleSaveUserInfo = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/userInfo/${_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: userInfo.name,
+          height: Number(userInfo.height),
+          weight: Number(userInfo.weight),
+        }),
+      });
 
-    if (dailyGoal === 0 && toggle) {
-      return (
-        <>
-          <View style={styles.settings}>
-            <Icon name="user" size={width * 0.35} color="#264653" />
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder="Namn"
-                value={userInfo.name}
-                onChangeText={(text) =>
-                  setUserInfo({ ...userInfo, name: text })
-                }
-              ></TextInput>
-              <TextInput
-                style={styles.input}
-                placeholder="Längd"
-                value={userInfo.height}
-                onChangeText={(text) =>
-                  setUserInfo({ ...userInfo, height: text })
-                }
-              ></TextInput>
-              <TextInput
-                style={styles.input}
-                placeholder="Vikt"
-                value={userInfo.weight}
-                onChangeText={(text) =>
-                  setUserInfo({ ...userInfo, weight: text })
-                }
-              ></TextInput>
-              <Button title="Nästa" onPress={() => setToggle(!toggle)}></Button>
-            </View>
-          </View>
-        </>
-      );
-    } else {
-      return (
-        <View>
-          <View style={styles.goals}>
-            <Text>Välj ditt dagliga steg-mål:</Text>
-            <TextInput
-              style={styles.inputGoal}
-              value={tempGoal}
-              onChangeText={setTempGoal}
-            ></TextInput>
-            <Button title="spara" onPress={handleSave}></Button>
-          </View>
-        </View>
-      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log("User info updated:", data);
+        setToggle(false); // go to goal screen
+      } else {
+        console.log("Error updating user:", data.message);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+    }
+  };
+
+  // save goal to backend
+  const handleSaveGoal = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/userInfo/${_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ weeklyGoal: Number(tempGoal) }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setDailyGoal(Number(tempGoal));
+        console.log("Goal updated:", data);
+      } else {
+        console.log("Error saving goal:", data.message);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.login}>
-        <Text style={styles.text}>{name}</Text>
-        <View style={{ width: 90 }}>
-          <Button title="Logga ut" />
-        </View>
+      {/* top bar */}
+      <View style={styles.loginBar}>
+        <Text style={styles.userName}>{name}</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logga ut</Text>
+        </TouchableOpacity>
       </View>
-      <View>{loggedIn()}</View>
+
+      {/* main content */}
+      {dailyGoal === 0 && toggle ? (
+        <View style={styles.settings}>
+          <Icon name="user-circle" size={width * 0.3} color="#264653" />
+          <View style={styles.form}>
+            <TextInput
+              style={styles.input}
+              placeholder="Namn"
+              value={userInfo.name}
+              onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Längd"
+              keyboardType="numeric"
+              value={userInfo.height}
+              onChangeText={(text) =>
+                setUserInfo({ ...userInfo, height: text })
+              }
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Vikt"
+              keyboardType="numeric"
+              value={userInfo.weight}
+              onChangeText={(text) =>
+                setUserInfo({ ...userInfo, weight: text })
+              }
+            />
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={handleSaveUserInfo}
+            >
+              <Text style={styles.buttonText}>Nästa</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.goals}>
+          <Text style={styles.goalLabel}>Välj ditt dagliga steg-mål:</Text>
+          <TextInput
+            style={styles.inputGoal}
+            value={tempGoal}
+            onChangeText={setTempGoal}
+            keyboardType="numeric"
+          />
+          <TouchableOpacity style={styles.primaryButton} onPress={handleSaveGoal}>
+            <Text style={styles.buttonText}>Spara</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -98,54 +142,91 @@ export default function Home({ user }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
   },
-  login: {
+  loginBar: {
     flexDirection: "row",
     height: 70,
     backgroundColor: "#264653",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
   },
-  text: {
+  userName: {
     color: "white",
-    justifyContent: "center",
-    fontSize: "x-large",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  logoutButton: {
+    backgroundColor: "#e76f51",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  logoutText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
   },
   settings: {
     flex: 1,
-    alignItems: "center",
     flexDirection: "row",
-    paddingTop: 50,
+    padding: 20,
     justifyContent: "center",
-    gap: 30,
+    alignItems: "center",
+    gap: 20,
+  },
+  form: {
+    flex: 1,
+    maxWidth: 250,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+    fontSize: 16,
   },
   goals: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 50,
     justifyContent: "center",
+    padding: 20,
+  },
+  goalLabel: {
+    fontSize: 22,
+    fontWeight: "500",
+    marginBottom: 12,
+    color: "#333",
   },
   inputGoal: {
-    borderColor: "#000000ff",
     borderWidth: 1,
-    borderRadius: 2,
-    margin: 10,
-    padding: 10,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+    fontSize: 16,
     textAlign: "center",
+    width: 140,
   },
-  input: {
-    borderBottomWidth: 1,
-    padding: 8,
+  primaryButton: {
+    backgroundColor: "#2a9d8f",
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+    width: 140,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
-
-/*
-            <View style={{ flexDirection: "row" }}>
-              <Text>Notiser: </Text>
-              <Switch
-                value={toggle}
-                onValueChange={() => setToggle(!toggle)}
-              ></Switch>
-            </View>
-*/
