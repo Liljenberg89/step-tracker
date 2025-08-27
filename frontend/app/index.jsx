@@ -5,6 +5,7 @@ import Home from "./home.jsx";
 
 export default function Index() {
   const [user, setUser] = useState(null);
+  /*
 
   useEffect(() => {
     const loadUser = async () => {
@@ -19,6 +20,8 @@ export default function Index() {
       AsyncStorage.setItem("user", JSON.stringify(user));
     }
   }, [user]);
+
+*/
 
   return user ? <Home user={user} /> : <Login onLogin={setUser} />;
 }

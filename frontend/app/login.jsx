@@ -21,6 +21,8 @@ export default function Login({ onLogin }) {
       console.log(JSON.stringify(data.message));
     }
   };
+
+  const createUser = () => {};
   return (
     <View style={styles.container}>
       <TextInput
@@ -38,6 +40,7 @@ export default function Login({ onLogin }) {
         secureTextEntry
       />
       <Button title="Logga in" onPress={handleLogin} />
+      <Button title="Skapa konto" onPress={createUser} />
     </View>
   );
 }
