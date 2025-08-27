@@ -5,6 +5,7 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import { useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -12,7 +13,6 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const { width } = Dimensions.get("window");
 
 export default function Home({ user }) {
-  //const [toggle, setToggle] = useState(true);
   const { name, weeklyGoal, username, _id } = user;
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -40,8 +40,7 @@ export default function Home({ user }) {
       });
       () => setToggle(true);
     };
-
-    if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
+if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
       return (
         <>
           <View style={styles.settings}>
@@ -76,7 +75,7 @@ export default function Home({ user }) {
           </View>
         </>
       );
-    } else if (!toggle) {
+} else if (!toggle) {
       return (
         <View>
           <View style={styles.goals}>
@@ -101,68 +100,15 @@ export default function Home({ user }) {
       return <Text>hej {name}</Text>;
     }
   };
-
-  return (
+return (
     <View style={styles.container}>
-      {/* top bar */}
-      <View style={styles.loginBar}>
-        <Text style={styles.userName}>{name}</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Logga ut</Text>
-        </TouchableOpacity>
+      <View style={styles.login}>
+        <Text style={styles.text}>{name}</Text>
+        <View style={{ width: 90 }}>
+          <Button title="Logga ut" />
+        </View>
       </View>
-
-      {/* main content */}
-      {dailyGoal === 0 && toggle ? (
-        <View style={styles.settings}>
-          <Icon name="user-circle" size={width * 0.3} color="#264653" />
-          <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="Namn"
-              value={userInfo.name}
-              onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Längd"
-              keyboardType="numeric"
-              value={userInfo.height}
-              onChangeText={(text) =>
-                setUserInfo({ ...userInfo, height: text })
-              }
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Vikt"
-              keyboardType="numeric"
-              value={userInfo.weight}
-              onChangeText={(text) =>
-                setUserInfo({ ...userInfo, weight: text })
-              }
-            />
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={handleSaveUserInfo}
-            >
-              <Text style={styles.buttonText}>Nästa</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ) : (
-        <View style={styles.goals}>
-          <Text style={styles.goalLabel}>Välj ditt dagliga steg-mål:</Text>
-          <TextInput
-            style={styles.inputGoal}
-            value={tempGoal}
-            onChangeText={setTempGoal}
-            keyboardType="numeric"
-          />
-          <TouchableOpacity style={styles.primaryButton} onPress={handleSaveGoal}>
-            <Text style={styles.buttonText}>Spara</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <View>{loggedIn()}</View>
     </View>
   );
 }

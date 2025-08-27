@@ -42,7 +42,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.put("/userInfo/:id", async (req, res) => {
-  //const user = await User.findByIdAndUpdate(req.params._id, )
+  const user = await User.findByIdAndUpdate(req.params.id, req.body.userInfo)
 });
 
 //------ tas bort senare ------
