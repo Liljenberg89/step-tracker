@@ -1,18 +1,18 @@
 import {
   View,
-  Button,
   StyleSheet,
   Text,
   Dimensions,
   TextInput,
+  TouchableOpacity,
+  Button,
 } from "react-native";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
 export default function Home({ user }) {
-  //const [toggle, setToggle] = useState(true);
   const { name, weeklyGoal, username, _id } = user;
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -20,6 +20,10 @@ export default function Home({ user }) {
     weight: "",
     weeklyGoal: "",
   });
+  const handleLogout = () => {
+  setUser(null);
+  };
+  
 
   const loggedIn = () => {
     const [toggle, setToggle] = useState(true);
@@ -36,8 +40,7 @@ export default function Home({ user }) {
       });
       () => setToggle(true);
     };
-
-    if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
+if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
       return (
         <>
           <View style={styles.settings}>
@@ -72,7 +75,7 @@ export default function Home({ user }) {
           </View>
         </>
       );
-    } else if (!toggle) {
+} else if (!toggle) {
       return (
         <View>
           <View style={styles.goals}>
@@ -97,8 +100,7 @@ export default function Home({ user }) {
       return <Text>hej {name}</Text>;
     }
   };
-
-  return (
+return (
     <View style={styles.container}>
       <View style={styles.login}>
         <Text style={styles.text}>{name}</Text>
@@ -114,54 +116,91 @@ export default function Home({ user }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
   },
-  login: {
+  loginBar: {
     flexDirection: "row",
     height: 70,
     backgroundColor: "#264653",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
   },
-  text: {
+  userName: {
     color: "white",
-    justifyContent: "center",
-    fontSize: "x-large",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  logoutButton: {
+    backgroundColor: "#e76f51",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  logoutText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
   },
   settings: {
     flex: 1,
-    alignItems: "center",
     flexDirection: "row",
-    paddingTop: 50,
+    padding: 20,
     justifyContent: "center",
-    gap: 30,
+    alignItems: "center",
+    gap: 20,
+  },
+  form: {
+    flex: 1,
+    maxWidth: 250,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+    fontSize: 16,
   },
   goals: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 50,
     justifyContent: "center",
+    padding: 20,
+  },
+  goalLabel: {
+    fontSize: 22,
+    fontWeight: "500",
+    marginBottom: 12,
+    color: "#333",
   },
   inputGoal: {
-    borderColor: "#000000ff",
     borderWidth: 1,
-    borderRadius: 2,
-    margin: 10,
-    padding: 10,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+    fontSize: 16,
     textAlign: "center",
+    width: 140,
   },
-  input: {
-    borderBottomWidth: 1,
-    padding: 8,
+  primaryButton: {
+    backgroundColor: "#2a9d8f",
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+    width: 140,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
-
-/*
-            <View style={{ flexDirection: "row" }}>
-              <Text>Notiser: </Text>
-              <Switch
-                value={toggle}
-                onValueChange={() => setToggle(!toggle)}
-              ></Switch>
-            </View>
-*/
