@@ -21,9 +21,8 @@ export default function Home({ user }) {
     weeklyGoal: "",
   });
   const handleLogout = () => {
-  setUser(null);
+    setUser(null);
   };
-  
 
   const loggedIn = () => {
     const [toggle, setToggle] = useState(true);
@@ -40,7 +39,7 @@ export default function Home({ user }) {
       });
       () => setToggle(true);
     };
-if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
+    if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
       return (
         <>
           <View style={styles.settings}>
@@ -49,6 +48,7 @@ if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
               <TextInput
                 style={styles.input}
                 placeholder="Namn"
+                placeholderTextColor="#aaa"
                 value={userInfo.name}
                 onChangeText={(text) =>
                   setUserInfo({ ...userInfo, name: text })
@@ -56,7 +56,8 @@ if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
               ></TextInput>
               <TextInput
                 style={styles.input}
-                placeholder="Längd"
+                placeholder="Längd (cm)"
+                placeholderTextColor="#aaa"
                 value={userInfo.height}
                 onChangeText={(text) =>
                   setUserInfo({ ...userInfo, height: text })
@@ -64,7 +65,8 @@ if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
               ></TextInput>
               <TextInput
                 style={styles.input}
-                placeholder="Vikt"
+                placeholder="Vikt (kg)"
+                placeholderTextColor="#aaa"
                 value={userInfo.weight}
                 onChangeText={(text) =>
                   setUserInfo({ ...userInfo, weight: text })
@@ -75,7 +77,7 @@ if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
           </View>
         </>
       );
-} else if (!toggle) {
+    } else if (!toggle) {
       return (
         <View>
           <View style={styles.goals}>
@@ -100,12 +102,12 @@ if (weeklyGoal === 0 && toggle && userInfo.weeklyGoal === "") {
       return <Text>hej {name}</Text>;
     }
   };
-return (
+  return (
     <View style={styles.container}>
-      <View style={styles.login}>
-        <Text style={styles.text}>{name}</Text>
-        <View style={{ width: 90 }}>
-          <Button title="Logga ut" />
+      <View style={styles.loginBar}>
+        <Text style={styles.userName}>{name}</Text>
+        <View>
+          <Icon name="cog" size={30} color="white" />
         </View>
       </View>
       <View>{loggedIn()}</View>
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#264653",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
   userName: {
     color: "white",

@@ -10,18 +10,26 @@ app.use(express.json());
 
 app.get("/users", async (req, res) => {
   const users = await User.find();
-  console.log("hello");
-  console.log(users);
+
   res.json(users);
 });
 
 app.post("/createUser", async (req, res) => {
   const { username, password } = req.body;
+  try {
+    console.log(req.body);
 
-  const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
-  const user = { username: username, passwordHash: passwordHash };
-  const create = new User({ user });
+    const user = { username: username, passwordHash: passwordHash };
+    const newUser = new User(user);
+
+    const saved = await newUser.save();
+
+    res.send(saved);
+  } catch (error) {
+    res.status(500).json({ error: "Något gick fel när användaren skapandes" });
+  }
 });
 
 app.post("/login", async (req, res) => {
@@ -64,7 +72,6 @@ const clearUsers = async () => {
     console.error("Kunde inte rensa användare:", error);
   }
 };
-
 // skapar ny användare
 const createUser = async () => {
   const passwordHash = await bcrypt.hash("123", 10);
