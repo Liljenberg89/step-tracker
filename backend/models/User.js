@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: false },
   height: { type: Number, required: false },
   weight: { type: Number, required: false },
-  weeklyGoal: { type: Number, default: 0 },
+  dailyGoal: { type: Number, default: 0 },
   distance: { type: Number, default: 0 },
 
   steps: [
