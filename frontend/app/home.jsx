@@ -9,8 +9,21 @@ export default function Home({ user }) {
   const progress = steps / total;
 
   useEffect(() => {
-    const subscription = Pedometer.watchStepCount((result) => {
+    const fetchSteps = async () => {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const now = new Date();
+
+      const result = await Pedometer.getStepCountAsync(startOfDay, now);
       setSteps(result.steps);
+    };
+
+    fetchSteps();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Pedometer.watchStepCount((result) => {
+      setSteps((prev) => prev + result.steps);
     });
     console.log("steg " + steps);
 
@@ -43,6 +56,9 @@ export default function Home({ user }) {
     );
   };
 
+  const height = user.height;
+  const stepLength = (height * 0.415) / 100;
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.loginBar}>
@@ -62,7 +78,7 @@ export default function Home({ user }) {
           width={250}
           duration={500}
         />
-        <Text>Distans: {user.distance}</Text>
+        <Text>Distans: {stepLength}km</Text>
       </View>
     </View>
   );
