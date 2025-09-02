@@ -27,7 +27,7 @@ export default function Settings({ user, setPage }) {
     const handleSave = async (e) => {
       console.log(userInfo);
 
-      const response = await fetch(`http://localhost:3000/userInfo/${_id}`, {
+      const response = await fetch(`http://192.168.1.95:3000/userInfo/${_id}`, {
         method: "put",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function Settings({ user, setPage }) {
         <>
           <View style={styles.settings}>
             <Icon name="user" size={width * 0.35} color="#264653" />
-            <View>
+            <View style={{ flex: 1 }}>
               <TextInput
                 style={styles.input}
                 placeholder="Namn"
@@ -83,7 +83,7 @@ export default function Settings({ user, setPage }) {
       );
     } else if (!toggle) {
       return (
-        <View>
+        <View style={{ flex: 1 }}>
           <View style={styles.goals}>
             <Text>Välj ditt dagliga steg-mål:</Text>
             <TextInput
@@ -112,7 +112,7 @@ export default function Settings({ user, setPage }) {
           <Icon name="cog" size={30} color="white" />
         </View>
       </View>
-      <View>{loggedIn()}</View>
+      <View style={{ flex: 1 }}>{loggedIn()}</View>
     </View>
   );
 }
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   },
   settings: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     padding: 20,
     justifyContent: "center",
     alignItems: "center",

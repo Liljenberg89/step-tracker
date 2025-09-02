@@ -1,20 +1,56 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import ProgressBar from "react-native-progress-bar-horizontal";
+import { Pedometer } from "expo-sensors";
 
 export default function Home({ user }) {
-  const current = 3000;
+  const [steps, setSteps] = useState(0);
   const total = user.dailyGoal;
-  const progress = current / total;
+  const progress = steps / total;
+
+  useEffect(() => {
+    const subscription = Pedometer.watchStepCount((result) => {
+      setSteps(result.steps);
+    });
+    console.log("steg " + steps);
+
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const time = new Date();
+      const hours = time.getHours();
+      const minutes = time.getMinutes();
+
+      if (hours === 23 && minutes === 59) {
+        saveSteps();
+      }
+    }, 1000 * 60);
+    return () => clearInterval(interval);
+  }, []);
+
+  const saveSteps = async () => {
+    const response = await fetch(
+      `http://192.168.1.95:3000/updateSteps/${_id}`,
+      {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ steps }),
+      }
+    );
+  };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={styles.loginBar}>
         <Text style={styles.userName}>{user.username}</Text>
       </View>
       <View style={styles.container}>
         <Text>
-          {current}/{user.dailyGoal}
+          {steps}/{user.dailyGoal}
         </Text>
 
         <ProgressBar
@@ -26,7 +62,6 @@ export default function Home({ user }) {
           width={250}
           duration={500}
         />
-        <Text>Distans: {user.distance}</Text>
         <Text>Distans: {user.distance}</Text>
       </View>
     </View>
