@@ -62,6 +62,15 @@ app.put("/userInfo/:id", async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body.userInfo);
 });
 
+app.put("/updateSteps/:id", async (req, res) => {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const user = await User.updateOne(
+    { _id: req.params.id, "steps.date": today },
+    { $set: { "steps.$.count": req.body.steps } }
+  );
+});
+
 //------ tas bort senare ------
 // tar bort alla användare ▬
 const clearUsers = async () => {
@@ -72,18 +81,5 @@ const clearUsers = async () => {
     console.error("Kunde inte rensa användare:", error);
   }
 };
-// skapar ny användare
-const createUser = async () => {
-  const passwordHash = await bcrypt.hash("123", 10);
 
-  const testUser = new User({
-    username: "filip",
-    passwordHash: passwordHash,
-    name: "Filip",
-    height: 187,
-    weight: 80,
-  });
-
-  await testUser.save();
-};
 export default app;

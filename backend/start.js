@@ -10,7 +10,7 @@ mongoose
   .connect("mongodb://127.0.0.1:27017/steptracker")
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(PORT, () =>
+    app.listen(PORT, "0.0.0.0", () =>
       console.log(`Server is up and running really fast on port ${PORT}!`)
     );
   })
