@@ -27,7 +27,7 @@ export default function Settings({ user, setPage }) {
     const handleSave = async (e) => {
       console.log(userInfo);
 
-      const response = await fetch(`http://192.168.68.66:3000/userInfo/${_id}`, {
+      const response = await fetch(`http://192.168.1.95:3000/userInfo/${_id}`, {
         method: "put",
         headers: {
           "Content-Type": "application/json",

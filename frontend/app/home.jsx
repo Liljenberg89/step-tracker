@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import ProgressBar from "react-native-progress-bar-horizontal";
 import { Pedometer } from "expo-sensors";
+import { Button } from "@react-navigation/elements";
 
 const quotes = [
   "Varje steg är ett steg närmare ditt mål.",
@@ -21,7 +22,7 @@ export default function Home({ user }) {
 
   const height = user.height;
   const stepLength = (height * 0.415) / 100; // meter per steg
-  const distance = (steps * stepLength / 1000).toFixed(2); // km
+  const distance = ((steps * stepLength) / 1000).toFixed(2); // km
 
   // Pick a random motivational quote
   const getRandomQuote = () => {
@@ -45,19 +46,8 @@ export default function Home({ user }) {
     setQuote(getRandomQuote());
   }, [currentDate]);
 
-  // Spara dagens steg vid midnatt
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const time = new Date();
-      if (time.getHours() === 23 && time.getMinutes() === 59) {
-        saveSteps();
-      }
-    }, 1000 * 60);
-    return () => clearInterval(interval);
-  }, []);
-
   const saveSteps = async () => {
-    await fetch(`http://192.168.68.66:3000/updateSteps/${user._id}`, {
+    await fetch(`http://192.168.1.95:3000/updateSteps/${user._id}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -131,6 +121,7 @@ export default function Home({ user }) {
 
           <Text style={styles.distance}>Distans: {distance} km</Text>
         </View>
+        <Button title="spara" onPress={saveSteps}></Button>
 
         {/* Quote */}
         <Text style={styles.quote}>"{quote}"</Text>
