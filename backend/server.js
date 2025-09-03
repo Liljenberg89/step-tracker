@@ -8,18 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/users", async (req, res) => {
-  const users = await User.find();
+app.get("/activeUser:id", async (req, res) => {
+  const user = await User.findById(req.params.id);
 
-  res.json(users);
-});
-
-app.get("/user", async (req, res) => {
-  const users = await User.findOne({
-    username: "filip",
-  });
-
-  res.json(users);
+  res.json(user);
 });
 
 app.post("/createUser", async (req, res) => {

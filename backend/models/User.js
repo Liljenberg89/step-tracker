@@ -15,10 +15,6 @@ const userSchema = new mongoose.Schema({
       count: { type: Number, required: true },
     },
   ],
-
-  settings: {
-    notifications: { type: Boolean, default: true },
-  },
 });
 
 const User = mongoose.model("User", userSchema);

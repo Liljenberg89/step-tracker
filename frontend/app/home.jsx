@@ -5,11 +5,25 @@ import { Pedometer } from "expo-sensors";
 
 export default function Home({ user }) {
   const [steps, setSteps] = useState(0);
+  const [activeUser, setActiveUser] = useState("");
   const total = user.dailyGoal;
   const progress = steps / total;
 
   const height = user.height;
   const stepLength = (height * 0.415) / 100;
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await fetch(
+        `http://192.168.1.95:3000/activeUser/${user._id}`
+      );
+      const data = await response.json();
+      if (data) {
+        setActiveUser(data);
+      }
+    };
+    fetchUser();
+  }, [user._id]);
 
   useEffect(() => {
     const fetchSteps = async () => {
@@ -48,7 +62,7 @@ export default function Home({ user }) {
 
   const saveSteps = async () => {
     const response = await fetch(
-      `http://192.168.1.95:3000/updateSteps/${_id}`,
+      `http://192.168.1.95:3000/updateSteps/${user._id}`,
       {
         method: "put",
         headers: {
@@ -62,7 +76,7 @@ export default function Home({ user }) {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.loginBar}>
-        <Text style={styles.userName}>{user.username}</Text>
+        <Text style={styles.userName}>{activeUser.username}</Text>
       </View>
       <View style={styles.container}>
         <Text>
