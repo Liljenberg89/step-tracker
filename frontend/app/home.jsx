@@ -8,6 +8,9 @@ export default function Home({ user }) {
   const total = user.dailyGoal;
   const progress = steps / total;
 
+  const height = user.height;
+  const stepLength = (height * 0.415) / 100;
+
   useEffect(() => {
     const fetchSteps = async () => {
       const startOfDay = new Date();
@@ -55,9 +58,6 @@ export default function Home({ user }) {
       }
     );
   };
-
-  const height = user.height;
-  const stepLength = (height * 0.415) / 100;
 
   return (
     <View style={{ flex: 1 }}>
