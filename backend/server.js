@@ -14,6 +14,14 @@ app.get("/users", async (req, res) => {
   res.json(users);
 });
 
+app.get("/user", async (req, res) => {
+  const users = await User.findOne({
+    username: "filip",
+  });
+
+  res.json(users);
+});
+
 app.post("/createUser", async (req, res) => {
   const { username, password } = req.body;
   try {
