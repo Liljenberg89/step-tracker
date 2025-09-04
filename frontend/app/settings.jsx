@@ -13,106 +13,61 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const { width } = Dimensions.get("window");
 
 export default function Settings({ user, setPage }) {
-  const { name, dailyGoal, username, _id } = user;
   const [userInfo, setUserInfo] = useState({
     name: "",
     height: "",
     weight: "",
-    dailyGoal: "",
   });
 
-  const loggedIn = () => {
-    const [toggle, setToggle] = useState(true);
+  const handleSave = async (e) => {
+    console.log(userInfo);
 
-    const handleSave = async (e) => {
-      console.log(userInfo);
-
-      const response = await fetch(`http://192.168.1.95:3000/userInfo/${_id}`, {
+    const response = await fetch(
+      `http://192.168.1.95:3000/userInfo/${user._id}`,
+      {
         method: "put",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ userInfo }),
-      });
-      () => setToggle(true);
-    };
-
-    useEffect(() => {
-      if (dailyGoal !== 0 && toggle && userInfo.dailyGoal == "") {
-        setPage("home");
       }
-    }, [dailyGoal, toggle, userInfo]);
+    );
+    const data = await response.json();
 
-    if (dailyGoal === 0 && toggle && userInfo.dailyGoal === "") {
-      return (
-        <>
-          <View style={styles.settings}>
-            <Icon name="user" size={width * 0.35} color="#264653" />
-            <View style={{ flex: 1 }}>
-              <TextInput
-                style={styles.input}
-                placeholder="Namn"
-                placeholderTextColor="#aaa"
-                value={userInfo.name}
-                onChangeText={(text) =>
-                  setUserInfo({ ...userInfo, name: text })
-                }
-              ></TextInput>
-              <TextInput
-                style={styles.input}
-                placeholder="Längd (cm)"
-                placeholderTextColor="#aaa"
-                value={userInfo.height}
-                onChangeText={(text) =>
-                  setUserInfo({ ...userInfo, height: text })
-                }
-              ></TextInput>
-              <TextInput
-                style={styles.input}
-                placeholder="Vikt (kg)"
-                placeholderTextColor="#aaa"
-                value={userInfo.weight}
-                onChangeText={(text) =>
-                  setUserInfo({ ...userInfo, weight: text })
-                }
-              ></TextInput>
-              <Button title="Nästa" onPress={() => setToggle(!toggle)}></Button>
-            </View>
-          </View>
-        </>
-      );
-    } else if (!toggle) {
-      return (
-        <View style={{ flex: 1 }}>
-          <View style={styles.goals}>
-            <Text>Välj ditt dagliga steg-mål:</Text>
-            <TextInput
-              style={styles.inputGoal}
-              value={userInfo.dailyGoal}
-              onChangeText={(text) =>
-                setUserInfo({ ...userInfo, dailyGoal: text })
-              }
-            ></TextInput>
-            <Button
-              title="spara"
-              onPress={() => {
-                handleSave(), setToggle(true);
-              }}
-            ></Button>
-          </View>
-        </View>
-      );
+    if (response.ok) {
+      setPage("home");
     }
   };
+
   return (
     <View style={styles.container}>
-      <View style={styles.loginBar}>
-        <Text style={styles.userName}>{name}</Text>
-        <View>
-          <Icon name="cog" size={30} color="white" />
+      <View style={styles.settings}>
+        <Icon name="user" size={width * 0.35} color="#264653" />
+        <View style={{ flex: 1 }}>
+          <TextInput
+            style={styles.input}
+            placeholder="Namn"
+            placeholderTextColor="#aaa"
+            value={userInfo.name}
+            onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            placeholder="Längd (cm)"
+            placeholderTextColor="#aaa"
+            value={userInfo.height}
+            onChangeText={(text) => setUserInfo({ ...userInfo, height: text })}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            placeholder="Vikt (kg)"
+            placeholderTextColor="#aaa"
+            value={userInfo.weight}
+            onChangeText={(text) => setUserInfo({ ...userInfo, weight: text })}
+          ></TextInput>
+          <Button title="Spara" onPress={handleSave}></Button>
         </View>
       </View>
-      <View style={{ flex: 1 }}>{loggedIn()}</View>
     </View>
   );
 }
@@ -208,3 +163,30 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+/*
+
+else if (!toggle) {
+      return (
+        <View style={{ flex: 1 }}>
+          <View style={styles.goals}>
+            <Text>Välj ditt dagliga steg-mål:</Text>
+            <TextInput
+              style={styles.inputGoal}
+              value={userInfo.dailyGoal}
+              onChangeText={(text) =>
+                setUserInfo({ ...userInfo, dailyGoal: text })
+              }
+            ></TextInput>
+            <Button
+              title="spara"
+              onPress={() => {
+                handleSave(), setToggle(true);
+              }}
+            ></Button>
+          </View>
+        </View>
+      );
+    }
+
+*/

@@ -16,7 +16,7 @@ export default function Home({ user }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [quote, setQuote] = useState("");
 
-  const total = user.dailyGoal;
+  const total = 0;
   const progress = steps / total;
 
   const height = user.height;
@@ -77,7 +77,7 @@ export default function Home({ user }) {
     <View style={styles.screen}>
       {/* Top bar */}
       <View style={styles.loginBar}>
-        <Text style={styles.userName}>{activeUser.username}</Text>
+        <Text style={styles.userName}>{user.username}</Text>
       </View>
 
       {/* Main content */}

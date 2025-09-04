@@ -14,6 +14,16 @@ app.get("/activeUser:id", async (req, res) => {
   res.json(user);
 });
 
+app.get("/user", async (req, res) => {
+  const user = await User.find({ username: "filip" });
+
+  res.json(user);
+});
+app.get("/users", async (req, res) => {
+  const user = await User.find();
+
+  res.json(user);
+});
 app.post("/createUser", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -26,7 +36,7 @@ app.post("/createUser", async (req, res) => {
 
     const saved = await newUser.save();
 
-    res.send(saved);
+    res.status(201).json(saved);
   } catch (error) {
     res.status(500).json({ error: "Något gick fel när användaren skapandes" });
   }
@@ -34,6 +44,7 @@ app.post("/createUser", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  console.log(req.body);
 
   try {
     const user = await User.findOne({
@@ -60,9 +71,11 @@ app.post("/login", async (req, res) => {
 
 app.put("/userInfo/:id", async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body.userInfo);
+  res.status(200).json(user);
 });
 
 app.put("/updateSteps/:id", async (req, res) => {
+  console.log("hejj");
   const today = new Date().toISOString().slice(0, 10);
 
   const user = await User.updateOne(

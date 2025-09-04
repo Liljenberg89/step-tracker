@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 
-export default function Login({ onLogin }) {
+export default function Login({ setUser, setPage }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,7 +22,8 @@ export default function Login({ onLogin }) {
       });
       const data = await response.json();
       if (response.ok) {
-        onLogin(data);
+        setUser(data);
+        setPage("home");
         console.log("Logged in:", data);
       } else {
         console.log("Login error:", data.message);
@@ -43,7 +44,8 @@ export default function Login({ onLogin }) {
       });
       const data = await response.json();
       if (response.ok) {
-        onLogin(data);
+        setUser(data);
+        setPage("settings");
         console.log("User created:", data);
       } else {
         console.log("Register error:", data.message);
