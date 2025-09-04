@@ -134,17 +134,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: "#333",
   },
-  inputGoal: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-    fontSize: 16,
-    textAlign: "center",
-    width: 140,
-  },
+
   primaryButton: {
     backgroundColor: "#2a9d8f",
     paddingVertical: 14,
@@ -163,30 +153,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
-/*
-
-else if (!toggle) {
-      return (
-        <View style={{ flex: 1 }}>
-          <View style={styles.goals}>
-            <Text>Välj ditt dagliga steg-mål:</Text>
-            <TextInput
-              style={styles.inputGoal}
-              value={userInfo.dailyGoal}
-              onChangeText={(text) =>
-                setUserInfo({ ...userInfo, dailyGoal: text })
-              }
-            ></TextInput>
-            <Button
-              title="spara"
-              onPress={() => {
-                handleSave(), setToggle(true);
-              }}
-            ></Button>
-          </View>
-        </View>
-      );
-    }
-
-*/

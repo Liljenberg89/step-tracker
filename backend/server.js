@@ -15,7 +15,7 @@ app.get("/activeUser:id", async (req, res) => {
 });
 
 app.get("/user", async (req, res) => {
-  const user = await User.find({ username: "filip" });
+  const user = await User.find({ username: "test" });
 
   res.json(user);
 });
@@ -75,13 +75,47 @@ app.put("/userInfo/:id", async (req, res) => {
 });
 
 app.put("/updateSteps/:id", async (req, res) => {
-  console.log("hejj");
   const today = new Date().toISOString().slice(0, 10);
 
   const user = await User.updateOne(
     { _id: req.params.id, "steps.date": today },
-    { $set: { "steps.$.count": req.body.steps } }
+    {
+      $set: {
+        "steps.$.count": req.body.steps,
+      },
+    }
   );
+
+  res.status(200).json(user);
+});
+app.put("/updateGoal/:id", async (req, res) => {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const user = await User.updateOne(
+    { _id: req.params.id, "steps.date": today },
+    {
+      $set: {
+        "steps.$.goal": req.body.goal,
+      },
+    }
+  );
+  if (user.matchedCount === 0) {
+    await User.updateOne(
+      { _id: req.params.id },
+      {
+        $push: {
+          steps: {
+            date: today,
+            goal: req.body.goal,
+          },
+        },
+      }
+    );
+  }
+  const selUser = await User.findById(req.params.id);
+  console.log(selUser);
+
+  res.status(200).json(selUser);
 });
 
 //------ tas bort senare ------
@@ -92,6 +126,38 @@ const clearUsers = async () => {
     console.log("Alla användare har raderats!");
   } catch (error) {
     console.error("Kunde inte rensa användare:", error);
+  }
+};
+
+const createTestUser = async () => {
+  try {
+    // Hårdkodade datum och stegdata
+    const stepsData = [
+      { date: new Date("2025-09-01"), goal: 10000, count: 7500 },
+      { date: new Date("2025-09-02"), goal: 12000, count: 9000 },
+      { date: new Date("2025-09-03"), goal: 8000, count: 8000 },
+    ];
+
+    // Hårdkodade användaruppgifter
+    const username = "test";
+    const password = "1";
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      username,
+      passwordHash,
+      name: "Test User",
+      height: 180,
+      weight: 75,
+      totalSteps: stepsData.reduce((sum, s) => sum + s.count, 0),
+      distance: 0, // kan beräknas senare
+      steps: stepsData,
+    });
+
+    const savedUser = await newUser.save();
+    console.log("User created:", savedUser);
+  } catch (err) {
+    console.error("Error creating user:", err);
   }
 };
 

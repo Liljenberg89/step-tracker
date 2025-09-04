@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Button } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Button,
+  TextInput,
+} from "react-native";
 import ProgressBar from "react-native-progress-bar-horizontal";
 import { Pedometer } from "expo-sensors";
 
@@ -12,16 +19,25 @@ const quotes = [
 ];
 
 export default function Home({ user }) {
+  const [activeUser, setActiveUser] = useState(user);
   const [steps, setSteps] = useState(0);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [quote, setQuote] = useState("");
+  const [goal, setGoal] = useState("");
 
-  const total = 0;
-  const progress = steps / total;
+  // Hitta posten för det valda datumet
+  const todayStep =
+    activeUser.steps?.find(
+      (s) => new Date(s.date).toDateString() === currentDate.toDateString()
+    ) || null;
+
+  const todayGoal = todayStep ? todayStep.goal : 0;
+  const todayCount = todayStep ? todayStep.count : 0;
+  const progress = todayGoal > 0 ? todayCount / todayGoal : 0;
 
   const height = user.height;
-  const stepLength = (height * 0.415) / 100; // meter per steg
-  const distance = ((steps * stepLength) / 1000).toFixed(2); // km
+  const stepLength = (height * 0.415) / 100;
+  const distance = ((steps * stepLength) / 1000).toFixed(2);
 
   // Pick a random motivational quote
   const getRandomQuote = () => {
@@ -45,14 +61,43 @@ export default function Home({ user }) {
     setQuote(getRandomQuote());
   }, [currentDate]);
 
-  const saveSteps = async () => {
-    await fetch(`http://192.168.1.95:3000/updateSteps/${user._id}`, {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ steps }),
-    });
+  useEffect(() => {
+    const saveSteps = async () => {
+      const response = await fetch(
+        `http://192.168.1.95:3000/updateSteps/${user._id}`,
+        {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ steps }),
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data);
+      }
+    };
+    saveSteps();
+  }, [steps]);
+
+  const saveGoal = async () => {
+    const response = await fetch(
+      `http://192.168.1.95:3000/updateGoal/${user._id}`,
+      {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ goal: Number(goal) }),
+      }
+    );
+    const data = await response.json();
+
+    if (response.ok) {
+      setActiveUser(data);
+      setGoal("");
+    }
   };
 
   // Hantera knappar
@@ -73,6 +118,9 @@ export default function Home({ user }) {
     setCurrentDate(prevDay);
   };
 
+  // Är det just dagens datum vi tittar på?
+  const isToday = currentDate.toDateString() === new Date().toDateString();
+
   return (
     <View style={styles.screen}>
       {/* Top bar */}
@@ -80,14 +128,12 @@ export default function Home({ user }) {
         <Text style={styles.userName}>{user.username}</Text>
       </View>
 
-      {/* Main content */}
-      <View style={styles.container}>
-        {/* Date navigation */}
+      {/* Date navigation */}
+      <View style={{ alignItems: "center" }}>
         <View style={styles.dateRow}>
           <TouchableOpacity onPress={goToPrevDay} style={styles.navBtn}>
             <Text style={styles.navText}>⬅️</Text>
           </TouchableOpacity>
-
           <Text style={styles.date}>
             {currentDate.toLocaleDateString("sv-SE", {
               weekday: "long",
@@ -100,32 +146,56 @@ export default function Home({ user }) {
             <Text style={styles.navText}>➡️</Text>
           </TouchableOpacity>
         </View>
+      </View>
+      {/* Main content */}
+      <View style={styles.container}>
+        {!todayStep ? (
+          isToday ? (
+            <View style={{ flex: 1 }}>
+              <View style={styles.goals}>
+                <Text>Välj ditt dagliga steg-mål!</Text>
 
-        {/* Steps Card */}
-        <View style={styles.card}>
-          <Text style={styles.steps}>{steps.toLocaleString()} steg</Text>
-          <Text style={styles.goalText}>
-            Mål: {total.toLocaleString()} steg
-          </Text>
+                <TextInput
+                  style={styles.inputGoal}
+                  value={goal}
+                  onChangeText={setGoal}
+                  keyboardType="numeric"
+                />
 
-          <ProgressBar
-            progress={progress}
-            fillColor="#2a9d8f"
-            unfilledColor="#e0e0e0"
-            borderWidth={0}
-            height={20}
-            width={280}
-            duration={500}
-          />
+                <Button title="spara" onPress={saveGoal} />
+              </View>
+            </View>
+          ) : (
+            <Text style={{ fontSize: 16, color: "#555", marginTop: 40 }}>
+              Inget mål sparat för denna dag
+            </Text>
+          )
+        ) : (
+          <>
+            {/* Steps Card */}
+            <View style={styles.card}>
+              <Text style={styles.steps}>{steps.toLocaleString()} steg</Text>
+              <Text style={styles.goalText}>
+                Mål: {todayGoal.toLocaleString()} steg
+              </Text>
 
-          <Text style={styles.distance}>Distans: {distance} km</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Button title="spara" onPress={saveSteps}></Button>
-        </View>
+              <ProgressBar
+                progress={progress}
+                fillColor="#2a9d8f"
+                unfilledColor="#e0e0e0"
+                borderWidth={0}
+                height={20}
+                width={280}
+                duration={500}
+              />
 
-        {/* Quote */}
-        <Text style={styles.quote}>"{quote}"</Text>
+              <Text style={styles.distance}>Distans: {distance} km</Text>
+            </View>
+
+            {/* Motivational quote */}
+            <Text style={styles.quote}>"{quote}"</Text>
+          </>
+        )}
       </View>
     </View>
   );
@@ -211,5 +281,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 40,
     paddingHorizontal: 15,
+  },
+  inputGoal: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    width: 140,
   },
 });
