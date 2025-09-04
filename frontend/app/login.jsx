@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    width: "40%",
+    width: "70%",
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    width: "40%",
+    width: "70%",
     backgroundColor: "#007AFF",
     paddingVertical: 14,
     borderRadius: 10,
