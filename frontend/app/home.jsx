@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Button } from "react-native";
 import ProgressBar from "react-native-progress-bar-horizontal";
 import { Pedometer } from "expo-sensors";
-import { Button } from "@react-navigation/elements";
 
 const quotes = [
   "Varje steg är ett steg närmare ditt mål.",
@@ -121,7 +120,9 @@ export default function Home({ user }) {
 
           <Text style={styles.distance}>Distans: {distance} km</Text>
         </View>
-        <Button title="spara" onPress={saveSteps}></Button>
+        <View style={{ flex: 1 }}>
+          <Button title="spara" onPress={saveSteps}></Button>
+        </View>
 
         {/* Quote */}
         <Text style={styles.quote}>"{quote}"</Text>
