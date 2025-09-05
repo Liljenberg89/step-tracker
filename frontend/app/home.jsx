@@ -63,6 +63,7 @@ export default function Home({ user }) {
 
   useEffect(() => {
     const saveSteps = async () => {
+      if (!isToday) return;
       const response = await fetch(
         `http://192.168.1.95:3000/updateSteps/${user._id}`,
         {
@@ -118,7 +119,6 @@ export default function Home({ user }) {
     setCurrentDate(prevDay);
   };
 
-  // Är det just dagens datum vi tittar på?
   const isToday = currentDate.toDateString() === new Date().toDateString();
 
   return (
