@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Button } from "react-native";
 import ProgressBar from "react-native-progress-bar-horizontal";
 import { Pedometer } from "expo-sensors";
+import * as Updates from "expo-updates";
+
 
 const quotes = [
   "Varje steg är ett steg närmare ditt mål.",
@@ -46,7 +48,7 @@ export default function Home({ user }) {
   }, [currentDate]);
 
   const saveSteps = async () => {
-    await fetch(`http://192.168.1.95:3000/updateSteps/${user._id}`, {
+    await fetch(`http://192.168.68.66:3000/updateSteps/${user._id}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -72,12 +74,24 @@ export default function Home({ user }) {
     prevDay.setDate(currentDate.getDate() - 1);
     setCurrentDate(prevDay);
   };
+  //startar om appen
+  const logOut = async () => {
+    try {
+      await Updates.reloadAsync(); 
+    } catch (e) {
+      console.error("Failed to reload:", e);
+    }
+  };
+
 
   return (
     <View style={styles.screen}>
       {/* Top bar */}
       <View style={styles.loginBar}>
         <Text style={styles.userName}>{user.username}</Text>
+        <TouchableOpacity onPress={logOut}>
+          <Text style={{ color: "white", fontSize: 18 }}>Logout</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Main content */}
