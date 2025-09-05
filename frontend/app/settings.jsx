@@ -20,22 +20,26 @@ export default function Settings({ user, setPage }) {
   });
 
   const handleSave = async (e) => {
-    console.log(userInfo);
+    try {
+      const response = await fetch(
+        `http://192.168.1.95:3000/userInfo/${user._id}`,
+        {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userInfo }),
+        }
+      );
+      const data = await response.json();
 
-    const response = await fetch(
-      `http://192.168.1.95:3000/userInfo/${user._id}`,
-      {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userInfo }),
+      if (response.ok) {
+        setPage("home");
+      } else {
+        throw new Error(data.message);
       }
-    );
-    const data = await response.json();
-
-    if (response.ok) {
-      setPage("home");
+    } catch (error) {
+      console.log(error.message);
     }
   };
 

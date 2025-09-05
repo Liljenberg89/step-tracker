@@ -65,40 +65,52 @@ export default function Home({ user }) {
   useEffect(() => {
     const saveSteps = async () => {
       if (!isToday) return;
+
+      try {
+        const response = await fetch(
+          `http://192.168.1.95:3000/updateSteps/${user._id}`,
+          {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ steps }),
+          }
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    saveSteps();
+  }, [steps]);
+
+  const saveGoal = async () => {
+    try {
       const response = await fetch(
-        `http://192.168.1.95:3000/updateSteps/${user._id}`,
+        `http://192.168.1.95:3000/updateGoal/${user._id}`,
         {
           method: "put",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ steps }),
+          body: JSON.stringify({ goal: Number(goal) }),
         }
       );
       const data = await response.json();
+
       if (response.ok) {
-        console.log(data);
+        setActiveUser(data);
+        setGoal("");
+      } else {
+        throw new Error(data.message);
       }
-    };
-    saveSteps();
-  }, [steps]);
-
-  const saveGoal = async () => {
-    const response = await fetch(
-      `http://192.168.1.95:3000/updateGoal/${user._id}`,
-      {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ goal: Number(goal) }),
-      }
-    );
-    const data = await response.json();
-
-    if (response.ok) {
-      setActiveUser(data);
-      setGoal("");
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -123,8 +135,8 @@ export default function Home({ user }) {
   const logOut = async () => {
     try {
       await Updates.reloadAsync();
-    } catch (e) {
-      console.error("Failed to reload:", e);
+    } catch (error) {
+      console.log("Failed to reload:", error.message);
     }
   };
 

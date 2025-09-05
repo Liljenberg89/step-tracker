@@ -25,10 +25,10 @@ export default function Login({ setUser, setPage }) {
         setUser(data);
         setPage("home");
       } else {
-        console.log("Login error:", data.message);
+        throw new Error(data.message);
       }
-    } catch (err) {
-      console.error("Network error:", err);
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -45,12 +45,11 @@ export default function Login({ setUser, setPage }) {
       if (response.ok) {
         setUser(data);
         setPage("settings");
-        console.log("User created:", data);
       } else {
-        console.log("Register error:", data.message);
+        throw new Error(data.message);
       }
-    } catch (err) {
-      console.error("Network error:", err);
+    } catch (error) {
+      console.log(error.message);
     }
   };
   const [showCreateUser, setShowCreateUser] = useState(true);
