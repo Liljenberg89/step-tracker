@@ -65,7 +65,7 @@ export default function Home({ user }) {
   useEffect(() => {
     const saveSteps = async () => {
       const response = await fetch(
-        `http://192.168.1.95:3000/updateSteps/${user._id}`,
+        `http://192.168.68.66:3000/updateSteps/${user._id}`,
         {
           method: "put",
           headers: {
@@ -84,7 +84,7 @@ export default function Home({ user }) {
 
   const saveGoal = async () => {
     const response = await fetch(
-      `http://192.168.1.95:3000/updateGoal/${user._id}`,
+      `http://192.168.68.66:3000/updateGoal/${user._id}`,
       {
         method: "put",
         headers: {
