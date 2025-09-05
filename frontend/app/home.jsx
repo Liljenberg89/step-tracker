@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import ProgressBar from "react-native-progress-bar-horizontal";
 import { Pedometer } from "expo-sensors";
+import * as Updates from "expo-updates";
 
 const quotes = [
   "Varje steg är ett steg närmare ditt mål.",
@@ -117,6 +118,14 @@ export default function Home({ user }) {
     prevDay.setDate(currentDate.getDate() - 1);
     setCurrentDate(prevDay);
   };
+  //startar om appen
+  const logOut = async () => {
+    try {
+      await Updates.reloadAsync();
+    } catch (e) {
+      console.error("Failed to reload:", e);
+    }
+  };
 
   // Är det just dagens datum vi tittar på?
   const isToday = currentDate.toDateString() === new Date().toDateString();
@@ -126,6 +135,9 @@ export default function Home({ user }) {
       {/* Top bar */}
       <View style={styles.loginBar}>
         <Text style={styles.userName}>{user.username}</Text>
+        <TouchableOpacity onPress={logOut}>
+          <Text style={{ color: "white", fontSize: 18 }}>Logout</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Date navigation */}

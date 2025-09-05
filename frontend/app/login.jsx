@@ -24,7 +24,6 @@ export default function Login({ setUser, setPage }) {
       if (response.ok) {
         setUser(data);
         setPage("home");
-        console.log("Logged in:", data);
       } else {
         console.log("Login error:", data.message);
       }
