@@ -7,11 +7,11 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/steptracker")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, "0.0.0.0", () =>
-      console.log(`Server is up and running really fast on port ${PORT}!`)
+      console.log(`Server is up and running really fast on port ${PORT}!`),
     );
   })
   .catch((err) => console.error("Connection error:", err));
